@@ -1,6 +1,8 @@
-// Footer Legal + Sticky Header — dmaret™ © 2025–2026
+// dmaret™ shared toolkit — © 2025–2026
 // Ajouter <script src="https://dmaret.github.io/footer.js"></script> avant </body>
 (function(){
+  var isPortal=location.hostname==='dmaret.github.io'&&(location.pathname==='/'||location.pathname==='/index.html');
+
   // === STICKY HEADER ===
   var header=document.querySelector('header');
   if(header){
@@ -8,6 +10,45 @@
     header.style.top='0';
     header.style.zIndex='100';
   }
+
+  // === BACK TO PORTAL BUTTON (not on portal itself) ===
+  if(!isPortal){
+    var btn=document.createElement('a');
+    btn.href='https://dmaret.github.io/';
+    btn.innerHTML='\u2190 Portail dmaret';
+    btn.style.cssText='position:fixed;bottom:20px;left:20px;z-index:9999;background:#1a1a1a;color:#c4a870;padding:8px 16px;border-radius:20px;font-size:12px;font-family:system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 12px rgba(0,0,0,.3);transition:all .2s;border:1px solid rgba(196,168,112,.3);';
+    btn.onmouseover=function(){this.style.background='#2a2a2a';this.style.transform='scale(1.05)';};
+    btn.onmouseout=function(){this.style.background='#1a1a1a';this.style.transform='scale(1)';};
+    document.body.appendChild(btn);
+  }
+
+  // === DARK MODE TOGGLE (on all pages) ===
+  var dm=document.createElement('button');
+  dm.innerHTML='\u263e';
+  dm.title='Mode sombre / clair';
+  dm.style.cssText='position:fixed;bottom:20px;right:20px;z-index:9999;background:#1a1a1a;color:#c4a870;width:40px;height:40px;border-radius:50%;border:1px solid rgba(196,168,112,.3);font-size:18px;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.3);transition:all .2s;display:flex;align-items:center;justify-content:center;';
+  dm.onmouseover=function(){this.style.transform='scale(1.1)';};
+  dm.onmouseout=function(){this.style.transform='scale(1)';};
+  var darkOn=localStorage.getItem('dmaret-dark')==='1';
+  function applyDark(on){
+    if(on){
+      document.documentElement.style.filter='invert(0.88) hue-rotate(180deg)';
+      var imgs=document.querySelectorAll('img,video,svg,.card-logo');
+      for(var i=0;i<imgs.length;i++)imgs[i].style.filter='invert(1) hue-rotate(180deg)';
+      dm.innerHTML='\u2600';
+      localStorage.setItem('dmaret-dark','1');
+    }else{
+      document.documentElement.style.filter='';
+      var imgs=document.querySelectorAll('img,video,svg,.card-logo');
+      for(var i=0;i<imgs.length;i++)imgs[i].style.filter='';
+      dm.innerHTML='\u263e';
+      localStorage.setItem('dmaret-dark','0');
+    }
+    darkOn=on;
+  }
+  dm.onclick=function(){applyDark(!darkOn);};
+  if(darkOn)applyDark(true);
+  document.body.appendChild(dm);
 
   // === FOOTER LEGAL ===
   var d=document.createElement('div');

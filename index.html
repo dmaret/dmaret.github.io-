@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>dmaret — Projets GitHub Pages</title>
+<title>dmaret™ — Projets GitHub Pages</title>
+<meta name="description" content="Portfolio de projets web de dmaret — outils professionnels, applications pédagogiques et outils de gestion publiés via GitHub Pages.">
+<meta property="og:title" content="dmaret™ — Projets GitHub Pages">
+<meta property="og:description" content="Portfolio de projets web : outils professionnels, applications pédagogiques et outils de gestion.">
+<meta property="og:image" content="https://dmaret.github.io/icon-512.png">
+<meta property="og:url" content="https://dmaret.github.io/">
+<meta property="og:type" content="website">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
@@ -11,19 +17,28 @@
 <style>
   :root{--bg:#f5f0e8;--text:#2c2820;--text2:#6b6356;--text3:#a89e90;--line:#ddd8cf;--accent:#cc1155;--card:#fff;--shadow:rgba(0,0,0,.06);}
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-  header{background:#1a1a1a;color:#f0ebe0;padding:48px 40px 40px;border-bottom:2px solid var(--accent);position:sticky;top:0;z-index:100;}
+  body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s;}
+  header{background:#1a1a1a;color:#f0ebe0;padding:28px 40px 24px;border-bottom:2px solid var(--accent);position:sticky;top:0;z-index:100;}
+  .header-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   header h1{font-size:28px;font-weight:300;letter-spacing:-.5px;}
   header h1 strong{font-weight:600;}
-  header p{margin-top:8px;color:#a89e90;font-size:14px;}
-  header .github-link{display:inline-flex;align-items:center;gap:6px;margin-top:16px;color:#c4a870;font-size:13px;text-decoration:none;border:0.5px solid #c4a870;border-radius:20px;padding:4px 12px;transition:background .15s;}
+  header p{margin-top:4px;color:#a89e90;font-size:14px;}
+  .header-actions{display:flex;align-items:center;gap:8px;}
+  header .github-link{display:inline-flex;align-items:center;gap:6px;color:#c4a870;font-size:13px;text-decoration:none;border:0.5px solid #c4a870;border-radius:20px;padding:4px 12px;transition:background .15s;}
   header .github-link:hover{background:rgba(196,168,112,.1);}
-  .status{max-width:860px;margin:0 auto;padding:24px 40px 0;font-size:12px;color:var(--text3);}
-  .grid{max-width:860px;margin:0 auto;padding:24px 40px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+  .search-bar{max-width:860px;margin:0 auto;padding:16px 40px 0;}
+  .search-input{width:100%;padding:10px 16px 10px 38px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit;background:var(--card);color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;}
+  .search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(204,17,85,.1);}
+  .search-wrap{position:relative;}
+  .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--text3);pointer-events:none;}
+  .search-count{font-size:11px;color:var(--text3);margin-top:6px;padding-left:4px;}
+  .status{max-width:860px;margin:0 auto;padding:16px 40px 0;font-size:12px;color:var(--text3);}
+  .grid{max-width:860px;margin:0 auto;padding:16px 40px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
   .card{background:var(--card);border:0.5px solid var(--line);border-radius:8px;padding:20px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;transition:box-shadow .15s,transform .15s;position:relative;overflow:hidden;}
   .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .2s;}
   .card:hover{box-shadow:0 4px 20px var(--shadow);transform:translateY(-2px);}
   .card:hover::before{transform:scaleX(1);}
+  .card.hidden{display:none;}
   .card-logo{position:absolute;top:12px;right:12px;width:40px;height:40px;border-radius:6px;background:#f0ebe0;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
   .card-name{font-size:15px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;}
   .card-desc{font-size:12.5px;color:var(--text2);line-height:1.5;flex:1;padding-right:40px;}
@@ -33,17 +48,14 @@
   .card-url{font-size:11px;color:var(--accent);word-break:break-all;margin-top:4px;opacity:.7;}
   .card-updated{font-size:10px;color:var(--text3);text-align:right;margin-top:4px;}
   .pages-badge{font-size:9.5px;font-weight:500;background:#238636;color:#fff;padding:2px 7px;border-radius:10px;letter-spacing:.3px;flex-shrink:0;}
-  .source-section{max-width:860px;margin:0 auto;padding:24px 40px;background:#fff;border-bottom:0.5px solid var(--line);}
-  .source-header{display:flex;align-items:center;gap:8px;margin-bottom:16px;font-size:14px;font-weight:600;}
+  .source-section{max-width:860px;margin:0 auto;padding:24px 40px;background:var(--card);border-bottom:0.5px solid var(--line);}
+  .source-header{display:flex;align-items:center;gap:8px;margin-bottom:16px;font-size:14px;font-weight:600;cursor:pointer;user-select:none;}
   .source-icon{width:20px;height:20px;border-radius:50%;background:#4CAF50;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;}
   .source-url{display:block;color:var(--accent);text-decoration:none;word-break:break-all;font-size:13px;margin-bottom:16px;font-family:monospace;padding:8px;background:#f5f5f5;border-radius:4px;}
   .source-url:hover{text-decoration:underline;}
-  .source-list{font-size:12px;color:var(--text2);}
-  .source-list strong{color:var(--text);display:block;margin-bottom:8px;}
-  .source-list ol{margin-left:20px;color:var(--text3);}
-  .source-list li{margin-bottom:4px;}
-  .source-list a{color:var(--accent);text-decoration:none;}
-  .source-list a:hover{text-decoration:underline;}
+  .source-content{overflow:hidden;transition:max-height .3s ease;max-height:500px;}
+  .source-content.collapsed{max-height:0;}
+  .source-toggle{margin-left:auto;font-size:12px;color:var(--text3);transition:transform .3s;}
   .loading{text-align:center;padding:80px 20px;color:var(--text3);font-size:14px;}
   .loading .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.2s ease-in-out infinite;margin:0 3px;}
   .loading .dot:nth-child(2){animation-delay:.2s;}
@@ -53,33 +65,50 @@
   footer{text-align:center;padding:24px;font-size:11px;color:var(--text3);border-top:0.5px solid var(--line);}
   .footer-legal{margin-top:16px;padding-top:16px;border-top:0.5px solid var(--line);font-size:10px;color:var(--text3);line-height:1.6;}
   .footer-legal strong{color:var(--text2);}
-  @media(max-width:600px){header{padding:32px 20px 28px;}.grid{padding:20px;grid-template-columns:1fr;}.source-section{padding:20px;}}
+  @media(max-width:600px){header{padding:20px 16px 16px;}.grid{padding:16px;grid-template-columns:1fr;}.source-section{padding:16px;}.search-bar{padding:12px 16px 0;}}
 </style>
 </head>
 <body>
 <header>
-  <h1><strong>dmaret™</strong> — Projets</h1>
-  <p>Pages web publiées via GitHub Pages</p>
-  <a class="github-link" href="https://github.com/dmaret" target="_blank" rel="noopener">↗ github.com/dmaret</a>
+  <div class="header-top">
+    <div>
+      <h1><strong>dmaret™</strong> — Projets</h1>
+      <p>Pages web publiées via GitHub Pages</p>
+    </div>
+    <div class="header-actions">
+      <a class="github-link" href="https://github.com/dmaret" target="_blank" rel="noopener">↗ GitHub</a>
+    </div>
+  </div>
 </header>
+
+<div class="search-bar">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="searchInput" type="text" placeholder="Rechercher un projet..." autocomplete="off">
+  </div>
+  <div class="search-count" id="searchCount"></div>
+</div>
+
 <div class="source-section">
-  <div class="source-header">
+  <div class="source-header" onclick="toggleSource()">
     <div class="source-icon">🌐</div>
     <strong>Liens Web</strong>
+    <span class="source-toggle" id="sourceToggle">▼</span>
   </div>
-  <strong style="color:var(--text);display:block;margin-bottom:8px;">Portail Principal (affiche tous les projets) :</strong>
-  <a class="source-url" href="https://dmaret.github.io/" target="_blank">https://dmaret.github.io/</a>
-
-  <strong style="color:var(--text);display:block;margin-top:16px;margin-bottom:8px;">Projets avec footer dynamique :</strong>
-  <ol style="margin-left:20px;color:var(--text2);font-size:12px;">
-    <li><a href="https://dmaret.github.io/EPI-Module-CoFo/" target="_blank" style="color:var(--accent);text-decoration:none;">https://dmaret.github.io/EPI-Module-CoFo/</a></li>
-    <li><a href="https://dmaret.github.io/outil_chiffrage_atelier_1er/" target="_blank" style="color:var(--accent);text-decoration:none;">https://dmaret.github.io/outil_chiffrage_atelier_1er/</a></li>
-    <li><a href="https://dmaret.github.io/DUI_V2.0/" target="_blank" style="color:var(--accent);text-decoration:none;">https://dmaret.github.io/DUI_V2.0/</a></li>
-    <li><a href="https://dmaret.github.io/Analyseur-de-courants-p-dagogiques/" target="_blank" style="color:var(--accent);text-decoration:none;">https://dmaret.github.io/Analyseur-de-courants-p-dagogiques/</a></li>
-    <li><a href="https://dmaret.github.io/theoriciens/" target="_blank" style="color:var(--accent);text-decoration:none;">https://dmaret.github.io/theoriciens/</a></li>
-    <li><a href="https://dmaret.github.io/Travail-et-accidents-professionnels/" target="_blank" style="color:var(--accent);text-decoration:none;">https://dmaret.github.io/Travail-et-accidents-professionnels/</a></li>
-    <li><a href="https://dmaret.github.io/Reservation_Le_Stade_MSP25-28B/" target="_blank" style="color:var(--accent);text-decoration:none;">https://dmaret.github.io/Reservation_Le_Stade_MSP25-28B/</a></li>
-  </ol>
+  <div class="source-content collapsed" id="sourceContent">
+    <strong style="color:var(--text);display:block;margin-bottom:8px;">Portail Principal :</strong>
+    <a class="source-url" href="https://dmaret.github.io/" target="_blank">https://dmaret.github.io/</a>
+    <strong style="color:var(--text);display:block;margin-top:16px;margin-bottom:8px;">Projets avec footer dynamique :</strong>
+    <ol style="margin-left:20px;color:var(--text2);font-size:12px;">
+      <li><a href="https://dmaret.github.io/EPI-Module-CoFo/" target="_blank" style="color:var(--accent);text-decoration:none;">EPI-Module-CoFo</a></li>
+      <li><a href="https://dmaret.github.io/outil_chiffrage_atelier_1er/" target="_blank" style="color:var(--accent);text-decoration:none;">outil_chiffrage_atelier_1er</a></li>
+      <li><a href="https://dmaret.github.io/DUI_V2.0/" target="_blank" style="color:var(--accent);text-decoration:none;">DUI_V2.0</a></li>
+      <li><a href="https://dmaret.github.io/Analyseur-de-courants-p-dagogiques/" target="_blank" style="color:var(--accent);text-decoration:none;">Analyseur-de-courants-p-dagogiques</a></li>
+      <li><a href="https://dmaret.github.io/theoriciens/" target="_blank" style="color:var(--accent);text-decoration:none;">theoriciens</a></li>
+      <li><a href="https://dmaret.github.io/Travail-et-accidents-professionnels/" target="_blank" style="color:var(--accent);text-decoration:none;">Travail-et-accidents-professionnels</a></li>
+      <li><a href="https://dmaret.github.io/Reservation_Le_Stade_MSP25-28B/" target="_blank" style="color:var(--accent);text-decoration:none;">Reservation_Le_Stade_MSP25-28B</a></li>
+    </ol>
+  </div>
 </div>
 
 <div class="status" id="status"></div>
@@ -89,7 +118,6 @@
 <footer id="footer">
   <div id="update-info"></div>
   <div style="margin-top:8px;opacity:.6;font-size:10px;">Données chargées via l'API GitHub · Mis à jour automatiquement</div>
-
   <div class="footer-legal">
     <strong>© 2025–2026 MARET Davie — Tous droits réservés</strong><br>
     <br>
@@ -108,25 +136,33 @@ const REPO='dmaret.github.io-';
 async function fetchRepos(){const r=[];let p=1;while(true){const res=await fetch(`https://api.github.com/users/${U}/repos?per_page=100&page=${p}&sort=updated`);if(!res.ok)throw new Error('API '+res.status);const d=await res.json();if(!d.length)break;r.push(...d);if(d.length<100)break;p++;}return r;}
 async function getLastCommit(){try{const res=await fetch(`https://api.github.com/repos/${U}/${REPO}/commits?per_page=1`);if(!res.ok)return null;const d=await res.json();return d[0];}catch(e){return null;}}
 function ago(s){const d=Math.floor((Date.now()-new Date(s))/86400000);if(d===0)return"aujourd'hui";if(d===1)return"hier";if(d<30)return`il y a ${d}j`;const m=Math.floor(d/30);if(m<12)return`il y a ${m} mois`;return`il y a ${Math.floor(m/12)} an(s)`;}
-function getProjectLogo(repoName){const logos={'EPI-Module-CoFo':'📊','outil_chiffrage_atelier_1er':'💰','DUI_V2.0':'📋','Analyseur-de-courants-p-dagogiques':'📈','dmaret.github.io-':'🌐'};return logos[repoName]||'📦';}
+function getProjectLogo(repoName){const logos={'EPI-Module-CoFo':'📊','outil_chiffrage_atelier_1er':'💰','DUI_V2.0':'📋','Analyseur-de-courants-p-dagogiques':'📈','dmaret.github.io-':'🌐','theoriciens':'🧠','Travail-et-accidents-professionnels':'⚠️','Reservation_Le_Stade_MSP25-28B':'🏟️','SuperMario':'🎮'};return logos[repoName]||'📦';}
 function getDisplayName(repoName){return repoName+'™';}
-function card(repo,url){const logo=getProjectLogo(repo.name);const displayName=getDisplayName(repo.name);return`<a class="card" href="${url}" target="_blank"><div class="card-logo">${logo}</div><div class="card-name">${displayName}<span class="pages-badge">● Pages</span></div><div class="card-desc">${repo.description||'Pas de description'}</div><div class="card-url">${url}</div><div class="card-meta">${repo.language?`<span class="card-lang">${repo.language}</span>`:'<span></span>'}${repo.stargazers_count>0?`<span class="card-stars">★ ${repo.stargazers_count}</span>`:'<span></span>'}</div><div class="card-updated">Mis à jour ${ago(repo.updated_at)}</div></a>`;}
+function card(repo,url){const logo=getProjectLogo(repo.name);const displayName=getDisplayName(repo.name);return`<a class="card" href="${url}" target="_blank" data-name="${repo.name.toLowerCase()}" data-desc="${(repo.description||'').toLowerCase()}"><div class="card-logo">${logo}</div><div class="card-name">${displayName}<span class="pages-badge">● Pages</span></div><div class="card-desc">${repo.description||'Pas de description'}</div><div class="card-url">${url}</div><div class="card-meta">${repo.language?`<span class="card-lang">${repo.language}</span>`:'<span></span>'}${repo.stargazers_count>0?`<span class="card-stars">★ ${repo.stargazers_count}</span>`:'<span></span>'}</div><div class="card-updated">Mis à jour ${ago(repo.updated_at)}</div></a>`;}
+
+// Search/filter
+document.getElementById('searchInput').addEventListener('input',function(){
+  const q=this.value.toLowerCase().trim();
+  const cards=document.querySelectorAll('.card');
+  let visible=0;
+  cards.forEach(function(c){
+    const match=!q||c.dataset.name.includes(q)||c.dataset.desc.includes(q);
+    c.classList.toggle('hidden',!match);
+    if(match)visible++;
+  });
+  document.getElementById('searchCount').textContent=q?visible+' projet(s) trouvé(s)':'';
+});
+
+// Toggle source section
+function toggleSource(){
+  var el=document.getElementById('sourceContent');
+  var arrow=document.getElementById('sourceToggle');
+  el.classList.toggle('collapsed');
+  arrow.textContent=el.classList.contains('collapsed')?'▼':'▲';
+}
+
 async function main(){const grid=document.getElementById('grid'),status=document.getElementById('status'),updateInfo=document.getElementById('update-info');try{const repos=await fetchRepos();const found=repos.filter(r=>r.has_pages);const lastCommit=await getLastCommit();if(lastCommit){const commitDate=new Date(lastCommit.commit.author.date);const dateStr=commitDate.toLocaleDateString('fr-FR',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});updateInfo.innerHTML=`<strong>Dernière modification :</strong> ${lastCommit.commit.message}<br><small>Par ${lastCommit.commit.author.name} · ${dateStr} · ${ago(lastCommit.commit.author.date)}</small>`;}grid.innerHTML=found.length?found.map(r=>{const url=r.name===`${U}.github.io`?`https://${U}.github.io/`:`https://${U}.github.io/${r.name}/`;return card(r,url);}).join(''):'<div class="empty">Aucun projet avec GitHub Pages trouvé.</div>';status.textContent=found.length?`${found.length} projet(s) avec GitHub Pages`:'';} catch(e){grid.innerHTML=`<div class="empty">Erreur: ${e.message}</div>`;status.textContent='';}}
 main();
 </script>
-<div class="toast-container" id="toast-container"></div>
-<!-- Legal notice and copyright -->
-<div class="footer-legal" style="margin-top:40px;padding:20px;background:#f9f9f9;border-top:1px solid #ddd;font-size:10px;color:#666;line-height:1.6;text-align:center;">
-  <strong style="color:#333;">© 2025–2026 MARET Davie — Tous droits réservés</strong><br>
-  <br>
-  <strong style="color:#555;">Conditions d'utilisation du code :</strong><br>
-  • Le code source de ces projets est fourni à titre informatif et éducatif<br>
-  • Toute reproduction, modification ou redistribution du code sans autorisation écrite est strictement interdite<br>
-  • Les designs, interfaces visuelles et contenus créatifs sont protégés par le droit d'auteur<br>
-  • Pour toute demande de réutilisation ou de collaboration, contactez l'auteur<br>
-  <br>
-  <strong style="color:#555;">Attribution :</strong> Si vous utilisez ou vous inspirez de ces projets, veuillez citer la source : dmaret © 2025–2026
-</div>
-
 </body>
 </html>
