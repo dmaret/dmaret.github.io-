@@ -55,12 +55,13 @@
   document.body.appendChild(dm);
 
   // === REMOVE EXISTING SHORT COPYRIGHT FOOTERS ===
-  var allDivs=document.querySelectorAll('div,p,.copyright-bar');
-  for(var i=0;i<allDivs.length;i++){
-    var el=allDivs[i];
+  var allEls=document.querySelectorAll('div,p,.copyright-bar');
+  for(var i=0;i<allEls.length;i++){
+    var el=allEls[i];
     var txt=el.textContent||'';
-    if(txt.indexOf('MARET Davie')!==-1&&txt.indexOf('Tous droits')!==-1&&txt.indexOf('Conditions')===-1){
-      if(el.offsetHeight<80)el.style.display='none';
+    // Hide short copyright lines (not the full conditions block)
+    if(txt.indexOf('MARET Davie')!==-1&&txt.indexOf('Tous droits')!==-1&&txt.indexOf('Conditions d')===-1&&txt.length<300){
+      el.style.display='none';
     }
     if(el.classList&&el.classList.contains('copyright-bar'))el.style.display='none';
   }
