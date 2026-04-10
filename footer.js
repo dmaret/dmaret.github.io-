@@ -56,10 +56,12 @@
 
   // === REMOVE EXISTING SHORT COPYRIGHT FOOTERS ===
   function cleanDuplicateFooters(){
+    var footer=document.getElementById('dmaret-footer');
     var all=document.body.getElementsByTagName('*');
     for(var i=0;i<all.length;i++){
       var el=all[i];
       if(el.id==='dmaret-footer')continue;
+      if(footer&&footer.contains(el))continue;
       if(el.children&&el.children.length>3)continue;
       var txt=el.textContent||'';
       var hasMaret=txt.indexOf('MARET')!==-1;
