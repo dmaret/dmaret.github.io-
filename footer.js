@@ -1,6 +1,15 @@
-// Footer Legal — dmaret™ © 2025–2026
+// Footer Legal + Sticky Header — dmaret™ © 2025–2026
 // Ajouter <script src="https://dmaret.github.io/footer.js"></script> avant </body>
 (function(){
+  // === STICKY HEADER ===
+  var header=document.querySelector('header');
+  if(header){
+    header.style.position='sticky';
+    header.style.top='0';
+    header.style.zIndex='100';
+  }
+
+  // === FOOTER LEGAL ===
   var d=document.createElement('div');
   d.style.cssText='text-align:center;padding:24px 20px;font-size:10px;color:#a89e90;line-height:1.6;border-top:0.5px solid #d4cfc5;margin-top:40px;background:#f5f2ec;';
   d.innerHTML='<strong style="color:#6b6356;">\u00a9 2025\u20132026 MARET Davie \u2014 Tous droits r\u00e9serv\u00e9s</strong><br><br>'+
