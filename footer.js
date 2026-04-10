@@ -6,15 +6,28 @@
   // === STICKY HEADER ===
   var header=document.querySelector('header')||document.querySelector('.header')||document.querySelector('.toolbar');
   if(header){
-    header.style.position='sticky';
-    header.style.top='0';
-    header.style.zIndex='100';
+    // Check if there's a tabs bar right after the header
+    var tabs=header.nextElementSibling;
+    var hasTabs=tabs&&(tabs.classList.contains('tabs-wrapper')||tabs.classList.contains('tabs'));
+    if(hasTabs){
+      // Wrap header + tabs in a sticky container
+      var wrap=document.createElement('div');
+      wrap.style.cssText='position:sticky;top:0;z-index:100;';
+      header.parentNode.insertBefore(wrap,header);
+      wrap.appendChild(header);
+      wrap.appendChild(tabs);
+    }else{
+      header.style.position='sticky';
+      header.style.top='0';
+      header.style.zIndex='100';
+    }
     if(!header.style.background&&!header.style.backgroundColor){
       var cs=window.getComputedStyle(header);
       if(!cs.backgroundColor||cs.backgroundColor==='rgba(0, 0, 0, 0)')header.style.background='#fff';
     }
     // Fix parents with overflow that breaks sticky
-    var parent=header.parentElement;
+    var stickyEl=hasTabs?wrap:header;
+    var parent=stickyEl.parentElement;
     while(parent&&parent!==document.body&&parent!==document.documentElement){
       var ps=window.getComputedStyle(parent);
       if(ps.overflow==='hidden'||ps.overflow==='auto'||ps.overflow==='scroll'){
