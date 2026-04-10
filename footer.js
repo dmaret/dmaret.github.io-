@@ -13,6 +13,19 @@
       var cs=window.getComputedStyle(header);
       if(!cs.backgroundColor||cs.backgroundColor==='rgba(0, 0, 0, 0)')header.style.background='#fff';
     }
+    // Fix parents with overflow that breaks sticky
+    var parent=header.parentElement;
+    while(parent&&parent!==document.body&&parent!==document.documentElement){
+      var ps=window.getComputedStyle(parent);
+      if(ps.overflow==='hidden'||ps.overflow==='auto'||ps.overflow==='scroll'){
+        parent.style.overflow='visible';
+      }
+      if(ps.overflowX==='hidden')parent.style.overflowX='visible';
+      if(ps.overflowY==='hidden'||ps.overflowY==='auto'||ps.overflowY==='scroll'){
+        parent.style.overflowY='visible';
+      }
+      parent=parent.parentElement;
+    }
   }
 
   // === BACK TO PORTAL BUTTON (not on portal itself) ===
