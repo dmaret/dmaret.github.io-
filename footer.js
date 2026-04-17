@@ -1,4 +1,4 @@
-// dmaret™ shared toolkit v3 — © 2025–2026
+// dmaret™ shared toolkit v3 — 2025–2026
 // Ajouter <script src="https://dmaret.github.io/footer.js"></script> avant </body>
 (function(){
   var isPortal=location.hostname==='dmaret.github.io'&&(location.pathname==='/'||location.pathname==='/index.html');
