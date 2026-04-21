@@ -133,14 +133,42 @@
 <script>
 const U='dmaret';
 const REPO='dmaret.github.io-';
-async function fetchRepos(){const r=[];let p=1;while(true){const res=await fetch(`https://api.github.com/users/${U}/repos?per_page=100&page=${p}&sort=updated`);if(!res.ok)throw new Error('API '+res.status);const d=await res.json();if(!d.length)break;r.push(...d);if(d.length<100)break;p++;}return r;}
+const CACHE_KEY='dmaret-repos-cache';
+const CACHE_DURATION=4*3600*1000;
+
+function getCachedRepos(){
+  const cached=localStorage.getItem(CACHE_KEY);
+  if(!cached)return null;
+  const {data,timestamp}=JSON.parse(cached);
+  const isExpired=Date.now()-timestamp>CACHE_DURATION;
+  return {data,isExpired};
+}
+
+function cacheRepos(repos){
+  localStorage.setItem(CACHE_KEY,JSON.stringify({data:repos,timestamp:Date.now()}));
+}
+
+async function fetchRepos(){
+  const r=[];let p=1;
+  while(true){
+    const res=await fetch(`https://api.github.com/users/${U}/repos?per_page=100&page=${p}&sort=updated`);
+    if(!res.ok)throw new Error('API '+res.status);
+    const d=await res.json();
+    if(!d.length)break;
+    r.push(...d);
+    if(d.length<100)break;
+    p++;
+  }
+  cacheRepos(r);
+  return r;
+}
+
 async function getLastCommit(){try{const res=await fetch(`https://api.github.com/repos/${U}/${REPO}/commits?per_page=1`);if(!res.ok)return null;const d=await res.json();return d[0];}catch(e){return null;}}
 function ago(s){const d=Math.floor((Date.now()-new Date(s))/86400000);if(d===0)return"aujourd'hui";if(d===1)return"hier";if(d<30)return`il y a ${d}j`;const m=Math.floor(d/30);if(m<12)return`il y a ${m} mois`;return`il y a ${Math.floor(m/12)} an(s)`;}
 function getProjectLogo(repoName){const logos={'EPI-Module-CoFo':'📊','outil_chiffrage_atelier_1er':'💰','DUI_V2.0':'📋','Analyseur-de-courants-p-dagogiques':'📈','dmaret.github.io-':'🌐','theoriciens':'🧠','Travail-et-accidents-professionnels':'⚠️','Reservation_Le_Stade_MSP25-28B':'🏟️','SuperMario':'🎮'};return logos[repoName]||'📦';}
 function getDisplayName(repoName){return repoName+'™';}
 function card(repo,url){const logo=getProjectLogo(repo.name);const displayName=getDisplayName(repo.name);return`<a class="card" href="${url}" target="_blank" data-name="${repo.name.toLowerCase()}" data-desc="${(repo.description||'').toLowerCase()}"><div class="card-logo">${logo}</div><div class="card-name">${displayName}<span class="pages-badge">● Pages</span></div><div class="card-desc">${repo.description||'Pas de description'}</div><div class="card-url">${url}</div><div class="card-meta">${repo.language?`<span class="card-lang">${repo.language}</span>`:'<span></span>'}${repo.stargazers_count>0?`<span class="card-stars">★ ${repo.stargazers_count}</span>`:'<span></span>'}</div><div class="card-updated">Mis à jour ${ago(repo.updated_at)}</div></a>`;}
 
-// Search/filter
 document.getElementById('searchInput').addEventListener('input',function(){
   const q=this.value.toLowerCase().trim();
   const cards=document.querySelectorAll('.card');
@@ -153,7 +181,6 @@ document.getElementById('searchInput').addEventListener('input',function(){
   document.getElementById('searchCount').textContent=q?visible+' projet(s) trouvé(s)':'';
 });
 
-// Toggle source section
 function toggleSource(){
   var el=document.getElementById('sourceContent');
   var arrow=document.getElementById('sourceToggle');
@@ -161,7 +188,32 @@ function toggleSource(){
   arrow.textContent=el.classList.contains('collapsed')?'▼':'▲';
 }
 
-async function main(){const grid=document.getElementById('grid'),status=document.getElementById('status'),updateInfo=document.getElementById('update-info');try{const repos=await fetchRepos();const found=repos.filter(r=>r.has_pages);const lastCommit=await getLastCommit();if(lastCommit){const commitDate=new Date(lastCommit.commit.author.date);const dateStr=commitDate.toLocaleDateString('fr-FR',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});updateInfo.innerHTML=`<strong>Dernière modification :</strong> ${lastCommit.commit.message}<br><small>Par ${lastCommit.commit.author.name} · ${dateStr} · ${ago(lastCommit.commit.author.date)}</small>`;}grid.innerHTML=found.length?found.map(r=>{const url=r.name===`${U}.github.io`?`https://${U}.github.io/`:`https://${U}.github.io/${r.name}/`;return card(r,url);}).join(''):'<div class="empty">Aucun projet avec GitHub Pages trouvé.</div>';status.textContent=found.length?`${found.length} projet(s) avec GitHub Pages`:'';} catch(e){grid.innerHTML=`<div class="empty">Erreur: ${e.message}</div>`;status.textContent='';}}
+async function main(){
+  const grid=document.getElementById('grid'),status=document.getElementById('status'),updateInfo=document.getElementById('update-info');
+  try{
+    const repos=await fetchRepos();
+    const found=repos.filter(r=>r.has_pages);
+    const lastCommit=await getLastCommit();
+    if(lastCommit){
+      const commitDate=new Date(lastCommit.commit.author.date);
+      const dateStr=commitDate.toLocaleDateString('fr-FR',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});
+      updateInfo.innerHTML=`<strong>Dernière modification :</strong> ${lastCommit.commit.message}<br><small>Par ${lastCommit.commit.author.name} · ${dateStr} · ${ago(lastCommit.commit.author.date)}</small>`;
+    }
+    grid.innerHTML=found.length?found.map(r=>{const url=r.name===`${U}.github.io`?`https://${U}.github.io/`:`https://${U}.github.io/${r.name}/`;return card(r,url);}).join(''):'<div class="empty">Aucun projet avec GitHub Pages trouvé.</div>';
+    status.textContent=found.length?`${found.length} projet(s) avec GitHub Pages`:'';
+  } catch(e){
+    const cached=getCachedRepos();
+    if(cached&&cached.data.length){
+      const found=cached.data.filter(r=>r.has_pages);
+      grid.innerHTML=found.map(r=>{const url=r.name===`${U}.github.io`?`https://${U}.github.io/`:`https://${U}.github.io/${r.name}/`;return card(r,url);}).join('');
+      status.textContent=`${found.length} projet(s) (en cache)`;
+      if(cached.isExpired)grid.innerHTML=`<div style="padding:16px;background:#fef3cd;border-radius:4px;margin-bottom:16px;font-size:12px;color:#664d03;">⚠️ Cache expiré · ${e.message}</div>`+grid.innerHTML;
+    }else{
+      grid.innerHTML=`<div class="empty">Erreur: ${e.message}</div>`;
+      status.textContent='';
+    }
+  }
+}
 main();
 </script>
 <script src="footer.js"></script>
