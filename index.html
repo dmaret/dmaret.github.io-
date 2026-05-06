@@ -109,6 +109,7 @@
       <li><a href="https://dmaret.github.io/Reservation_Le_Stade_MSP25-28B/" target="_blank" style="color:var(--accent);text-decoration:none;">Reservation_Le_Stade_MSP25-28B</a></li>
       <li><a href="https://dmaret.github.io/Gantt_Davie/" target="_blank" style="color:var(--accent);text-decoration:none;">Gantt_Davie</a></li>
       <li><a href="https://dmaret.github.io/outil_chiffrage_atelier_1er/logistique_cea_1er/" target="_blank" style="color:var(--accent);text-decoration:none;">logistique_cea_1er</a></li>
+      <li><a href="https://dmaret.github.io/Frankenstein_atelier/" target="_blank" style="color:var(--accent);text-decoration:none;">Frankenstein_atelier</a></li>
     </ol>
   </div>
 </div>
@@ -147,7 +148,8 @@ const FALLBACK_REPOS=[
   {name:'Travail-et-accidents-professionnels',has_pages:true,description:'Travail et accidents professionnels',language:'HTML',stargazers_count:0,updated_at:'2026-04-21T00:00:00Z'},
   {name:'Reservation_Le_Stade_MSP25-28B',has_pages:true,description:'Réservation Le Stade MSP25-28B',language:'HTML',stargazers_count:0,updated_at:'2026-04-21T00:00:00Z'},
   {name:'Gantt_Davie',has_pages:true,description:'Diagramme de Gantt',language:'HTML',stargazers_count:0,updated_at:'2026-04-21T00:00:00Z'},
-  {name:'logistique_cea_1er',has_pages:true,description:'Logistique CEA',language:'HTML',stargazers_count:0,updated_at:'2026-04-21T00:00:00Z',custom_url:'https://dmaret.github.io/outil_chiffrage_atelier_1er/logistique_cea_1er/'}
+  {name:'logistique_cea_1er',has_pages:true,description:'Logistique CEA',language:'HTML',stargazers_count:0,updated_at:'2026-04-21T00:00:00Z',custom_url:'https://dmaret.github.io/outil_chiffrage_atelier_1er/logistique_cea_1er/'},
+  {name:'Frankenstein_atelier',has_pages:true,description:'Frankenstein Atelier',language:'HTML',stargazers_count:0,updated_at:'2026-04-21T00:00:00Z'}
 ];
 
 function getCachedRepos(){
@@ -179,7 +181,7 @@ async function fetchRepos(){
 
 async function getLastCommit(){try{const res=await fetch(`https://api.github.com/repos/${U}/${REPO}/commits?per_page=1`);if(!res.ok)return null;const d=await res.json();return d[0];}catch(e){return null;}}
 function ago(s){const d=Math.floor((Date.now()-new Date(s))/86400000);if(d===0)return"aujourd'hui";if(d===1)return"hier";if(d<30)return`il y a ${d}j`;const m=Math.floor(d/30);if(m<12)return`il y a ${m} mois`;return`il y a ${Math.floor(m/12)} an(s)`;}
-function getProjectLogo(repoName){const logos={'EPI-Module-CoFo':'📊','outil_chiffrage_atelier_1er':'💰','DUI_V2.0':'📋','Analyseur-de-courants-p-dagogiques':'📈','dmaret.github.io-':'🌐','theoriciens':'🧠','Travail-et-accidents-professionnels':'⚠️','Reservation_Le_Stade_MSP25-28B':'🏟️','SuperMario':'🎮','Gantt_Davie':'📅','logistique_cea_1er':'📦'};return logos[repoName]||'📦';}
+function getProjectLogo(repoName){const logos={'EPI-Module-CoFo':'📊','outil_chiffrage_atelier_1er':'💰','DUI_V2.0':'📋','Analyseur-de-courants-p-dagogiques':'📈','dmaret.github.io-':'🌐','theoriciens':'🧠','Travail-et-accidents-professionnels':'⚠️','Reservation_Le_Stade_MSP25-28B':'🏟️','SuperMario':'🎮','Gantt_Davie':'📅','logistique_cea_1er':'📦','Frankenstein_atelier':'🧟'};return logos[repoName]||'📦';}
 function getDisplayName(repoName){return repoName;}
 function card(repo,url){const logo=getProjectLogo(repo.name);const displayName=getDisplayName(repo.name);return`<a class="card" href="${url}" target="_blank" data-name="${repo.name.toLowerCase()}" data-desc="${(repo.description||'').toLowerCase()}"><div class="card-logo">${logo}</div><div class="card-name">${displayName}<span class="pages-badge">● Pages</span></div><div class="card-desc">${repo.description||'Pas de description'}</div><div class="card-url">${url}</div><div class="card-meta">${repo.language?`<span class="card-lang">${repo.language}</span>`:'<span></span>'}${repo.stargazers_count>0?`<span class="card-stars">★ ${repo.stargazers_count}</span>`:'<span></span>'}</div><div class="card-updated">Mis à jour ${ago(repo.updated_at)}</div></a>`;}
 
