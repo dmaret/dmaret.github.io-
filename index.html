@@ -213,6 +213,8 @@ async function main(){
   try{
     const repos=await fetchRepos();
     const found=repos.filter(r=>r.has_pages);
+    const customEntries=FALLBACK_REPOS.filter(f=>f.custom_url&&!found.find(r=>r.name===f.name));
+    found.push(...customEntries);
     const lastCommit=await getLastCommit();
     if(lastCommit){
       const commitDate=new Date(lastCommit.commit.author.date);
@@ -225,6 +227,8 @@ async function main(){
     const cached=getCachedRepos();
     if(cached&&cached.data.length){
       const found=cached.data.filter(r=>r.has_pages);
+      const customEntries2=FALLBACK_REPOS.filter(f=>f.custom_url&&!found.find(r=>r.name===f.name));
+      found.push(...customEntries2);
       grid.innerHTML=found.map(r=>{const fb=FALLBACK_REPOS.find(f=>f.name===r.name);const url=fb&&fb.custom_url?fb.custom_url:r.name===`${U}.github.io`?`https://${U}.github.io/`:`https://${U}.github.io/${r.name}/`;return card(r,url);}).join('');
       status.textContent=`${found.length} projet(s) (en cache)`;
       if(cached.isExpired)grid.innerHTML=`<div style="padding:16px;background:#fef3cd;border-radius:4px;margin-bottom:16px;font-size:12px;color:#664d03;">⚠️ Cache expiré · ${e.message}</div>`+grid.innerHTML;
