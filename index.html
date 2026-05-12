@@ -134,12 +134,12 @@
     • Les designs, interfaces visuelles et contenus créatifs sont protégés par le droit d'auteur<br>
     • Pour toute demande de réutilisation ou de collaboration, contactez l'auteur<br>
     <br>
-    <strong>Attribution :</strong> Si vous utilisez ou vous inspirez de ces projets, veuillez citer la source : dmaret_2025–2026
+    <strong>Attribution :</strong> Si vous utilisez ou vous inspirez de ces projets, veuillez citer la source : D.MARET™ © 2025–2026
   </div>
 </footer>
 <script>
 const U='dmaret';
-const REPO='dmaret.github.io-';
+const REPO='dmaret.github.io';
 const CACHE_KEY='dmaret-repos-cache';
 const CACHE_DURATION=4*3600*1000;
 const FALLBACK_REPOS=[
@@ -187,7 +187,7 @@ async function fetchRepos(){
 
 async function getLastCommit(){try{const res=await fetch(`https://api.github.com/repos/${U}/${REPO}/commits?per_page=1`);if(!res.ok)return null;const d=await res.json();return d[0];}catch(e){return null;}}
 function ago(s){const d=Math.floor((Date.now()-new Date(s))/86400000);if(d===0)return"aujourd'hui";if(d===1)return"hier";if(d<30)return`il y a ${d}j`;const m=Math.floor(d/30);if(m<12)return`il y a ${m} mois`;return`il y a ${Math.floor(m/12)} an(s)`;}
-function getProjectLogo(repoName){const logos={'EPI-Module-CoFo':'📊','outil_chiffrage_atelier_1er':'💰','DUI_V2.0':'📋','Analyseur-de-courants-p-dagogiques':'📈','dmaret.github.io-':'🌐','theoriciens':'🧠','Travail-et-accidents-professionnels':'⚠️','Reservation_Le_Stade_MSP25-28B':'🏟️','SuperMario':'🎮','Gantt_Davie':'📅','logistique_cea_1er':'📦','Frankenstein_atelier':'🧟','Planification-d-atelier':'📋','Frankenstein_lite':'🥗'};return logos[repoName]||'📦';}
+function getProjectLogo(repoName){const logos={'EPI-Module-CoFo':'📊','outil_chiffrage_atelier_1er':'💰','DUI_V2.0':'📋','Analyseur-de-courants-p-dagogiques':'📈','dmaret.github.io':'🌐','theoriciens':'🧠','Travail-et-accidents-professionnels':'⚠️','Reservation_Le_Stade_MSP25-28B':'🏟️','SuperMario':'🎮','Gantt_Davie':'📅','logistique_cea_1er':'📦','Frankenstein_atelier':'🧟','Planification-d-atelier':'📋','Frankenstein_lite':'🥗'};return logos[repoName]||'📦';}
 function getDisplayName(repoName){return repoName;}
 function card(repo,url){const logo=getProjectLogo(repo.name);const displayName=getDisplayName(repo.name);return`<a class="card" href="${url}" target="_blank" data-name="${repo.name.toLowerCase()}" data-desc="${(repo.description||'').toLowerCase()}"><div class="card-logo">${logo}</div><div class="card-name">${displayName}<span class="pages-badge">● Pages</span></div><div class="card-desc">${repo.description||'Pas de description'}</div><div class="card-url">${url}</div><div class="card-meta">${repo.language?`<span class="card-lang">${repo.language}</span>`:'<span></span>'}${repo.stargazers_count>0?`<span class="card-stars">★ ${repo.stargazers_count}</span>`:'<span></span>'}</div><div class="card-updated">Mis à jour ${ago(repo.updated_at)}</div></a>`;}
 
@@ -214,7 +214,7 @@ async function main(){
   const grid=document.getElementById('grid'),status=document.getElementById('status'),updateInfo=document.getElementById('update-info');
   try{
     const repos=await fetchRepos();
-    const found=repos.filter(r=>r.has_pages);
+    const found=repos.filter(r=>r.has_pages&&r.name!==`${U}.github.io`);
     const customEntries=FALLBACK_REPOS.filter(f=>f.custom_url&&!found.find(r=>r.name===f.name));
     found.push(...customEntries);
     const lastCommit=await getLastCommit();
@@ -228,14 +228,14 @@ async function main(){
   } catch(e){
     const cached=getCachedRepos();
     if(cached&&cached.data.length){
-      const found=cached.data.filter(r=>r.has_pages);
+      const found=cached.data.filter(r=>r.has_pages&&r.name!==`${U}.github.io`);
       const customEntries2=FALLBACK_REPOS.filter(f=>f.custom_url&&!found.find(r=>r.name===f.name));
       found.push(...customEntries2);
       grid.innerHTML=found.map(r=>{const fb=FALLBACK_REPOS.find(f=>f.name===r.name);const url=fb&&fb.custom_url?fb.custom_url:r.name===`${U}.github.io`?`https://${U}.github.io/`:`https://${U}.github.io/${r.name}/`;return card(r,url);}).join('');
       status.textContent=`${found.length} projet(s) (en cache)`;
       if(cached.isExpired)grid.innerHTML=`<div style="padding:16px;background:#fef3cd;border-radius:4px;margin-bottom:16px;font-size:12px;color:#664d03;">⚠️ Cache expiré · ${e.message}</div>`+grid.innerHTML;
     }else{
-      const found=FALLBACK_REPOS.filter(r=>r.has_pages);
+      const found=FALLBACK_REPOS.filter(r=>r.has_pages&&r.name!==`${U}.github.io`);
       grid.innerHTML=found.map(r=>{const url=r.custom_url||( r.name===`${U}.github.io`?`https://${U}.github.io/`:`https://${U}.github.io/${r.name}/`);return card(r,url);}).join('');
       status.textContent=`${found.length} projet(s) (hors-ligne)`;
     }
@@ -244,9 +244,13 @@ async function main(){
 main().then(()=>{
   const grid=document.getElementById('grid');
   let dragEl=null;
+  let dragStartX=0,dragStartY=0;
+  grid.addEventListener('mousedown',function(e){dragStartX=e.clientX;dragStartY=e.clientY;});
   grid.addEventListener('dragstart',function(e){
     const card=e.target.closest('.card');
     if(!card)return;
+    const dx=Math.abs(e.clientX-dragStartX),dy=Math.abs(e.clientY-dragStartY);
+    if(dx<5&&dy<5){e.preventDefault();return;}
     dragEl=card;
     card.classList.add('dragging');
     e.dataTransfer.effectAllowed='move';
