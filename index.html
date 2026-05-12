@@ -34,7 +34,9 @@
   .search-count{font-size:11px;color:var(--text3);margin-top:6px;padding-left:4px;}
   .status{max-width:860px;margin:0 auto;padding:16px 40px 0;font-size:12px;color:var(--text3);}
   .grid{max-width:960px;margin:0 auto;padding:16px 40px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;}
-  .card{background:var(--card);border:0.5px solid var(--line);border-radius:8px;padding:20px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;transition:box-shadow .15s,transform .15s;position:relative;overflow:hidden;}
+  .card{background:var(--card);border:0.5px solid var(--line);border-radius:8px;padding:20px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;transition:box-shadow .15s,transform .15s;position:relative;overflow:hidden;cursor:grab;}
+  .card.dragging{opacity:.4;cursor:grabbing;}
+  .card.drag-over{border:2px dashed var(--accent);}
   .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .2s;}
   .card:hover{box-shadow:0 4px 20px var(--shadow);transform:translateY(-2px);}
   .card:hover::before{transform:scaleX(1);}
@@ -239,7 +241,44 @@ async function main(){
     }
   }
 }
-main();
+main().then(()=>{
+  const grid=document.getElementById('grid');
+  let dragEl=null;
+  grid.addEventListener('dragstart',function(e){
+    const card=e.target.closest('.card');
+    if(!card)return;
+    dragEl=card;
+    card.classList.add('dragging');
+    e.dataTransfer.effectAllowed='move';
+  });
+  grid.addEventListener('dragend',function(e){
+    const card=e.target.closest('.card');
+    if(card)card.classList.remove('dragging');
+    grid.querySelectorAll('.card').forEach(c=>c.classList.remove('drag-over'));
+    dragEl=null;
+    const order=Array.from(grid.querySelectorAll('.card')).map(c=>c.dataset.name);
+    localStorage.setItem('dmaret-card-order',JSON.stringify(order));
+  });
+  grid.addEventListener('dragover',function(e){
+    e.preventDefault();
+    const card=e.target.closest('.card');
+    if(!card||card===dragEl)return;
+    grid.querySelectorAll('.card').forEach(c=>c.classList.remove('drag-over'));
+    card.classList.add('drag-over');
+    const rect=card.getBoundingClientRect();
+    const mid=rect.y+rect.height/2;
+    if(e.clientY<mid)grid.insertBefore(dragEl,card);
+    else grid.insertBefore(dragEl,card.nextSibling);
+  });
+  grid.querySelectorAll('.card').forEach(c=>{c.setAttribute('draggable','true');});
+  const saved=localStorage.getItem('dmaret-card-order');
+  if(saved){
+    const order=JSON.parse(saved);
+    const cards=Array.from(grid.querySelectorAll('.card'));
+    cards.sort((a,b)=>{const ai=order.indexOf(a.dataset.name);const bi=order.indexOf(b.dataset.name);return(ai===-1?999:ai)-(bi===-1?999:bi);});
+    cards.forEach(c=>grid.appendChild(c));
+  }
+});
 </script>
 <script src="footer.js"></script>
 </body>
