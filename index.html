@@ -244,14 +244,12 @@ async function main(){
 main().then(()=>{
   const grid=document.getElementById('grid');
   let dragEl=null;
-  let dragStartX=0,dragStartY=0;
-  grid.addEventListener('mousedown',function(e){dragStartX=e.clientX;dragStartY=e.clientY;});
+  let didDrag=false;
   grid.addEventListener('dragstart',function(e){
     const card=e.target.closest('.card');
     if(!card)return;
-    const dx=Math.abs(e.clientX-dragStartX),dy=Math.abs(e.clientY-dragStartY);
-    if(dx<5&&dy<5){e.preventDefault();return;}
     dragEl=card;
+    didDrag=true;
     card.classList.add('dragging');
     e.dataTransfer.effectAllowed='move';
   });
@@ -262,6 +260,7 @@ main().then(()=>{
     dragEl=null;
     const order=Array.from(grid.querySelectorAll('.card')).map(c=>c.dataset.name);
     localStorage.setItem('dmaret-card-order',JSON.stringify(order));
+    setTimeout(()=>{didDrag=false;},100);
   });
   grid.addEventListener('dragover',function(e){
     e.preventDefault();
@@ -273,6 +272,9 @@ main().then(()=>{
     const mid=rect.y+rect.height/2;
     if(e.clientY<mid)grid.insertBefore(dragEl,card);
     else grid.insertBefore(dragEl,card.nextSibling);
+  });
+  grid.addEventListener('click',function(e){
+    if(didDrag){e.preventDefault();didDrag=false;}
   });
   grid.querySelectorAll('.card').forEach(c=>{c.setAttribute('draggable','true');});
   const saved=localStorage.getItem('dmaret-card-order');
